@@ -4,13 +4,14 @@
  */
 package se.kth.iv1350.seminar4.controller;
 import se.kth.iv1350.seminar4.model.Sale;
-import se.kth.iv1350.seminar4.model.Item;
 import se.kth.iv1350.seminar4.integration.ExternalInventorySystemAccessPoint;
 import java.util.List;
 import se.kth.iv1350.seminar4.integration.ExternalAccountingSystemAccessPoint;
+import se.kth.iv1350.seminar4.integration.ItemInventoryResultLessThanZeroException;
 import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 import se.kth.iv1350.seminar4.model.dto.ReceiptDTO;
 import se.kth.iv1350.seminar4.integration.NoMatchingItemByIdException;
+import se.kth.iv1350.seminar4.model.dto.SaleStateDTO;
 
 /**
  * A controller class.
@@ -44,8 +45,9 @@ public class Controller {
      * @param money The amount paid in SEK.
      * 
      * @return A string representing the receipt and the change
+     * @throws ItemInventoryResultLessThanZeroException thrown if the inventory result in a lower stock than 0.
      */
-    public ReceiptDTO payment(int money){
+    public ReceiptDTO payment(int money) throws ItemInventoryResultLessThanZeroException{
         ReceiptDTO printReceipt = sale.payment(money);
         List<ItemDTO> itemList = sale.getItemList();
         ReceiptDTO saleInfo = sale.getSaleInfo();
@@ -59,12 +61,12 @@ public class Controller {
      * 
      * @param itemId The id of the item.
      * 
-     * @return A string containing information about the item and current total of the sale.
+     * @return A SaleStateDTO containing information about the item and current total of the sale.
      * @throws NoMatchingItemByIdException When no item with the provided id is found.
      */
-    public String addItem(int itemId) throws NoMatchingItemByIdException {
-        Item item = externInv.retrieveItem(itemId);
-        return sale.addItemToReceipt(item, 1);
+    public SaleStateDTO addItem(int itemId) throws NoMatchingItemByIdException {
+        ItemDTO itemDTO = externInv.retrieveItem(itemId, 1);
+        return sale.addItemToReceipt(itemDTO);
     }
     
     /**
@@ -73,11 +75,11 @@ public class Controller {
      * @param itemId The id of the item.
      * @param amount The amount of said item.
      * 
-     * @return A string containing information about the item and current total of the sale.
+     * @return A SaleStateDTO containing information about the item and current total of the sale.
      * @throws NoMatchingItemByIdException When no item with the provided id is found.
      */
-    public String addItem(int itemId, int amount) throws NoMatchingItemByIdException {
-        Item item = externInv.retrieveItem(itemId);
-        return sale.addItemToReceipt(item, amount);
+    public SaleStateDTO addItem(int itemId, int amount) throws NoMatchingItemByIdException {
+        ItemDTO itemDTO = externInv.retrieveItem(itemId, amount);
+        return sale.addItemToReceipt(itemDTO);
     }
 }

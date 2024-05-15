@@ -5,7 +5,7 @@
 package se.kth.iv1350.seminar4.model;
 import java.util.List;
 import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
-import se.kth.iv1350.seminar4.model.dto.ReceiptDTO;
+import se.kth.iv1350.seminar4.model.dto.*;
 
 /**
  * The class used to manage a new Sale.
@@ -25,30 +25,25 @@ public class Sale {
      * Adds an item to the receipt, 
      * if the item already is on the receipt, increase that items amount instead.
      * 
-     * @param item The item to add.
-     * @param amount The number of items to add.
-     * @return A string containing information about the sale and the item.
+     * @param itemDTO The item to add.
+     * @return A DTO containing information about the sale and the item.
      */
-    public String addItemToReceipt(Item item, int amount){
-        String displayInfo = "";
-        if (receipt.itemExists(item)){
-            receipt.increaseItemAmount(item.getItemId(), amount);
+    public SaleStateDTO addItemToReceipt(ItemDTO itemDTO){
+        if (receipt.itemExists(itemDTO)){
+            return receipt.increaseItemAmount(itemDTO);
         } else{
-            item.increaseAmount(amount);
-            receipt.addItemToReceipt(item);
+            return receipt.addItemToReceipt(itemDTO);
         }
-        if (amount > 1){
-            displayInfo = "Add " + amount + " items with item id " + item.getItemId() + ": \n";
-        } else{
-            displayInfo = "Add " + amount + " item with item id " + item.getItemId() + ": \n";
-        }
-                
-        displayInfo += "Item Id: " + item.getItemId() + "\n" + "Item Name: " + item.getItemName() + "\n" + 
-                "VAT: " + (int)(item.getVAT()*100) + "% \n" + "Item Cost: " + item.getPrice() + " SEK \n" + 
-                "Item description: " + item.getItemDescription() + "\n\n" + "Running Total (incl VAT): " + 
-                receipt.getCurrentCost() + " SEK \n" + "Total VAT: " + receipt.getTotalVAT() + " SEK\n";
-        
-        return displayInfo;
+//        if (amount > 1){
+//            displayInfo = "Add " + amount + " items with item id " + item.getItemId() + ": \n";
+//        } else{
+//            displayInfo = "Add " + amount + " item with item id " + item.getItemId() + ": \n";
+//        }
+//                
+//        displayInfo += "Item Id: " + item.getItemId() + "\n" + "Item Name: " + item.getItemName() + "\n" + 
+//                "VAT: " + (int)(item.getVAT()*100) + "% \n" + "Item Cost: " + item.getPrice() + " SEK \n" + 
+//                "Item description: " + item.getItemDescription() + "\n\n" + "Running Total (incl VAT): " + 
+//                receipt.getCurrentCost() + " SEK \n" + "Total VAT: " + receipt.getTotalVAT() + " SEK\n";
     }
     
     /**

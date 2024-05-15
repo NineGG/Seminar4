@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 import se.kth.iv1350.seminar4.model.dto.ReceiptDTO;
+import se.kth.iv1350.seminar4.model.dto.SaleStateDTO;
 
 /**
  * A receipt containing all the information of the Sale.
@@ -91,9 +92,12 @@ public class Receipt {
      * 
      * @param Item an item object.
      */
-    void addItemToReceipt(Item item){
-        itemList.add(item);
+    SaleStateDTO addItemToReceipt(ItemDTO itemDTO){
+        
+        itemList.add(new Item(itemDTO));
         recalculateReceipt();
+        
+        return new SaleStateDTO(itemDTO, costAfterDiscount);
     }
     
     
@@ -102,31 +106,33 @@ public class Receipt {
      * 
      * @param itemId Id of said item.
      * @param increaseAmount The amount to increase the item by.
+     * @return a DTO containing the updated item and running total of the sale.
      */
-    void increaseItemAmount(int itemId, int increaseAmount){
+    SaleStateDTO increaseItemAmount(ItemDTO itemDTO){
+        int itemId = itemDTO.getItemId();
         for (Item item : itemList){
             if (item.getItemId() == itemId) {
-                item.increaseAmount(increaseAmount);
+                item.increaseAmount(itemDTO.getItemAmount());
+                recalculateReceipt();
+                
+                return new SaleStateDTO(itemDTOCreator(item), costAfterDiscount);
             }
         }
-        
-        recalculateReceipt();
+        return null;
     }
     
     
     /**
      * checks if an item exists in the current receipt instance.
      * 
-     * @param item the item to look for.
+     * @param itemDTO An itemDTO of the item to look for.
      * @return A boolean representing if the item exists or not.
      */
-    public boolean itemExists(Item item){
-        int itemInListId;
-        int itemId = item.getItemId();
+    public boolean itemExists(ItemDTO itemDTO){
+        int itemId = itemDTO.getItemId();
         for (Item itemInList : itemList){
-            
-            itemInListId = itemInList.getItemId();
-            if (itemId == itemInListId){
+
+            if (itemId == itemInList.getItemId()){
                 return true;
             }
             
@@ -250,6 +256,17 @@ public class Receipt {
         totalCostBeforeDiscount = costTemp;
         totalVAT = tempVAT;
         calculateDiscount();
+    }
+    
+    private ItemDTO itemDTOCreator(Item item){
+        return new ItemDTO(
+            item.getItemAmount(), 
+            item.getItemId(), 
+            item.getItemName(), 
+            item.getItemDescription(), 
+            item.getVAT(), 
+            item.getPrice()
+        );
     }
     
     

@@ -21,7 +21,7 @@ import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 public class ReceiptTest {
     
     private Receipt testReceipt;
-    private Item testItem;
+    private ItemDTO testItemDTO;
     private String itemName;
     private String itemDesc;
     private double valueAddedTax;
@@ -38,14 +38,14 @@ public class ReceiptTest {
         valueAddedTax = 0.30;
         itemDesc = "An Test Item.";
         itemName = "Item";
-        testItem = new Item(amount, itemId, itemName, itemDesc, valueAddedTax, price);
+        testItemDTO = new ItemDTO(amount, itemId, itemName, itemDesc, valueAddedTax, price);
         
     }
     
     @AfterEach
     public void tearDown() {
         testReceipt = null;
-        testItem = null;
+        testItemDTO = null;
         amount = 0;
         price = 0;
         itemId = 0;
@@ -59,14 +59,15 @@ public class ReceiptTest {
         //tests both the addItem and getItemList methods.
         System.out.println("addItemToReceipt");
         List<ItemDTO> expectedList = new ArrayList<>();
-        expectedList.add(new ItemDTO(testItem.getItemAmount(), 
-                    testItem.getItemId(), 
-                    testItem.getItemDescription(), 
-                    testItem.getItemName(), 
-                    testItem.getVAT(), 
-                    testItem.getPrice()
+        expectedList.add(new ItemDTO(
+            testItemDTO.getItemAmount(), 
+            testItemDTO.getItemId(), 
+            testItemDTO.getItemDescription(), 
+            testItemDTO.getItemName(), 
+            testItemDTO.getVAT(), 
+            testItemDTO.getPrice()
         ));
-        testReceipt.addItemToReceipt(testItem);
+        testReceipt.addItemToReceipt(testItemDTO);
         List<ItemDTO> resultList = testReceipt.getItemList();
         boolean isEqual = true;
         if (resultList.size() != expectedList.size())
@@ -101,11 +102,19 @@ public class ReceiptTest {
     @Test
     public void testIncreaseItemAmountEqualsExpectedIncreasedValue() {
         System.out.println("increaseItemAmount");
-        testReceipt.addItemToReceipt(testItem);
+        testReceipt.addItemToReceipt(testItemDTO);
         int increase = 2;
-        testReceipt.increaseItemAmount(itemId, increase);
+        ItemDTO increaseByItemDTO = new ItemDTO(
+            increase,
+            testItemDTO.getItemId(),
+            testItemDTO.getItemDescription(),
+            testItemDTO.getItemName(),
+            testItemDTO.getVAT(),
+            testItemDTO.getPrice()
+        );
+        testReceipt.increaseItemAmount(increaseByItemDTO);
         int expectedResult = amount + increase;
-        int result = testItem.getItemAmount();
+        int result = testItemDTO.getItemAmount();
         assertEquals(expectedResult, result, "result doesn't equal the expected increase in price");
     }
 
@@ -122,16 +131,16 @@ public class ReceiptTest {
     @Test
     public void testItemExistsGivesTheExpectedValueWhenItDoesExist() {
         System.out.println("itemExists");
-        testReceipt.addItemToReceipt(testItem);
+        testReceipt.addItemToReceipt(testItemDTO);
         boolean expValue = true;
-        boolean result = testReceipt.itemExists(testItem);
+        boolean result = testReceipt.itemExists(testItemDTO);
         assertEquals(expValue, result, "item not found in receipt even though it was added");
     }
     
     @Test
     public void testDiscountOnlyFlatEqualsExpected(){
         System.out.println("Discount Flat (getDiscount + addDiscountFlat)");
-        testReceipt.addItemToReceipt(testItem);
+        testReceipt.addItemToReceipt(testItemDTO);
         double expResult = 3.0;
         testReceipt.addDiscountFlat(expResult);
         double result = testReceipt.getDiscount();
@@ -141,7 +150,7 @@ public class ReceiptTest {
     @Test
     public void testDiscountOnlyPercentageEqualsExpected() {
         System.out.println("Discount Percentage (getDiscount + addDiscountPercentage)");
-        testReceipt.addItemToReceipt(testItem);
+        testReceipt.addItemToReceipt(testItemDTO);
         double discountPercentage = 0.4;
         testReceipt.addDiscountPercentage(discountPercentage);
         double expResult = testReceipt.getCostBeforeDiscount() - (price * amount * (1-discountPercentage));
@@ -152,7 +161,7 @@ public class ReceiptTest {
     @Test
     public void testDiscountPrecentageAndFlatEqualsExpected(){
         System.out.println("Discount (getDiscount + addDiscountPercentage + addDiscountFlat)");
-        testReceipt.addItemToReceipt(testItem);
+        testReceipt.addItemToReceipt(testItemDTO);
         double discountPercentage = 0.4;
         double discountFlat = 3.0;
         double totalCost = (price * amount);
@@ -166,12 +175,12 @@ public class ReceiptTest {
     @Test
     public void testReceiptAndChangeEqualsExpectedString(){
         System.out.println("receiptAndChange");
-        testReceipt.addItemToReceipt(testItem);
+        testReceipt.addItemToReceipt(testItemDTO);
         
         
         String expResult = "\n------------------ Begin receipt -------------------\n"
-                + "Time of Sale: " + testReceipt.getDateAndTime() + "\n\n" + testItem.getItemName() + "\t " + 
-                testItem.getItemAmount() + " x " + testItem.getPrice()
+                + "Time of Sale: " + testReceipt.getDateAndTime() + "\n\n" + testItemDTO.getItemName() + "\t " + 
+                testItemDTO.getItemAmount() + " x " + testItemDTO.getPrice()
                 + " SEK\n" +"\nTotal: \t" + testReceipt.getCostBeforeDiscount() + " SEK\nVAT: \t" + 
                 testReceipt.getTotalVAT() + " SEK" + 
                 "\n------------------ End receipt -------------------\n\n" +
