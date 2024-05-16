@@ -60,7 +60,7 @@ public class View{
         
         double endOfSaleCost = contr.endSale();
         
-        System.out.println("Ending sale, to complete sale pay " + endOfSaleCost);
+        System.out.println("Ending sale, to complete sale please pay " + endOfSaleCost + "SEK");
         
         String dateAndTimeString;
         
