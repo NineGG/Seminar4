@@ -171,22 +171,4 @@ public class ReceiptTest {
         double result = testReceipt.getDiscount();
         assertEquals(expResult, result, "Discount doesn't equal the expected value");
     }
-    
-    @Test
-    public void testReceiptAndChangeEqualsExpectedString(){
-        System.out.println("receiptAndChange");
-        testReceipt.addItemToReceipt(testItemDTO);
-        
-        
-        String expResult = "\n------------------ Begin receipt -------------------\n"
-                + "Time of Sale: " + testReceipt.getDateAndTime() + "\n\n" + testItemDTO.getItemName() + "\t " + 
-                testItemDTO.getItemAmount() + " x " + testItemDTO.getPrice()
-                + " SEK\n" +"\nTotal: \t" + testReceipt.getCostBeforeDiscount() + " SEK\nVAT: \t" + 
-                testReceipt.getTotalVAT() + " SEK" + 
-                "\n------------------ End receipt -------------------\n\n" +
-                "Change to give to the customer: " + testReceipt.getChange() + " SEK";
-        String result = testReceipt.receiptAndChange();
-        
-        assertEquals(expResult, result, "The receipt and change string doesn't match the expected string");
-    }
 }

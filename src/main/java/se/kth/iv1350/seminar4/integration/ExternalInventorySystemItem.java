@@ -89,9 +89,8 @@ public class ExternalInventorySystemItem {
     /**
      * Updates inventory of the inventoryitem.
      * @param itemDTO An itemDTO of said item.
-     * @throws se.kth.iv1350.seminar4.integration.ItemInventoryResultLessThanZeroException
      */
-    public void updateInventory(ItemDTO itemDTO) throws ItemInventoryResultLessThanZeroException {
+    public void updateInventory(ItemDTO itemDTO) {
         this.numOfItemInInventory -= itemDTO.getItemAmount();
     }
 }

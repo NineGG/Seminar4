@@ -3,6 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package se.kth.iv1350.seminar4.model.dto;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 import java.util.List;
 import se.kth.iv1350.seminar4.model.Receipt;
@@ -15,7 +17,7 @@ public class ReceiptDTO {
     private List<ItemDTO> itemList;
     
     private double totalCostBeforeDiscount;
-    private String dateAndTime;
+    private LocalDateTime dateAndTime;
     private double change;
     private double payment;
     private double percentageAfterDiscount;
@@ -56,9 +58,9 @@ public class ReceiptDTO {
     /**
      * Gets the date and time the sale was concluded.
      * 
-     * @return A string representing the date and time.
+     * @return A LocalDateTime object representing the date and time.
      */
-    public String getDateAndTime(){
+    public LocalDateTime getDateAndTime(){
         return dateAndTime;
     }
     
@@ -132,6 +134,11 @@ public class ReceiptDTO {
      * @return An ItemDTO List
      */
     public List<ItemDTO> getItemList(){
-        return itemList;
+        List<ItemDTO> returnList = new ArrayList<>();
+        
+        for (ItemDTO itemDTO : itemList) {
+            returnList.add(itemDTO);
+        }
+        return returnList;
     }
 }

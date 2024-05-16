@@ -27,14 +27,14 @@ public class ExternalInventorySystemAccessPoint {
      */
     public ExternalInventorySystemAccessPoint(){
         itemDescription = "Whole Milk, 500ml, 3% Fat Content";
-        itemName = "Milk\t";
+        itemName = "Milk";
         price = 25.50;
         valueAddedTax = 0.12;
         itemId = 423;
         inventory.add(new ExternalInventorySystemItem(100, itemId, itemName, itemDescription, valueAddedTax, price));
         
         itemDescription = "500g, Gluten Free";
-        itemName = "Bread\t";
+        itemName = "Bread";
         price = 54.50;
         valueAddedTax = 0.12;
         itemId = 231;
@@ -62,21 +62,63 @@ public class ExternalInventorySystemAccessPoint {
         return new ItemDTO(itemAmount, itemId, itemName, itemDescription, valueAddedTax, price);
     }
     
+    private class UpdateQueue{
+        private class UpdateQueueSet{
+        
+            private ItemDTO itemDTO;
+            private ExternalInventorySystemItem inventoryItem;
+
+            public UpdateQueueSet(ItemDTO itemDTO, ExternalInventorySystemItem inventoryItem) {
+                this.itemDTO = itemDTO;
+                this.inventoryItem = inventoryItem;
+            }
+
+            public void update(){
+                inventoryItem.updateInventory(itemDTO);
+            }
+        }
+        
+        private List<UpdateQueueSet> setList = new ArrayList<>();
+        
+        public void addSet(ItemDTO itemDTO, ExternalInventorySystemItem inventoryItem){
+            setList.add(new UpdateQueueSet(itemDTO, inventoryItem));
+        }
+    }
+    
     /**
      * Updates the ExternalInventorySystem based on the items provided.
      * 
      * @param itemList List of Item objects.
      * @throws ItemInventoryResultLessThanZeroException thrown if the inventory update would result in an inventory less than 0
+     * @throws ItemNotFoundInInventoryException Thrown if there was no Inventory Item with equating itemId to one of the items.
      */
-    public void updateInventory(List<ItemDTO> itemList) throws ItemInventoryResultLessThanZeroException{
+    public void updateInventory(List<ItemDTO> itemList) throws ItemInventoryResultLessThanZeroException, ItemNotFoundInInventoryException{
+        UpdateQueue queue = new UpdateQueue();
+        boolean itemFoundInInventory;
+        
+        
         for(ItemDTO item : itemList){
+            itemFoundInInventory = false;
             for(ExternalInventorySystemItem inventoryItem : inventory){
                 if (inventoryItem.getItemId() == item.getItemId()){
-                    inventoryItem.updateInventory(item);
+                    itemFoundInInventory = true;
+                    queue.addSet(item, inventoryItem);
+                    
+                    if (inventoryItem.getNumOfItemInInventory() < item.getItemAmount()){
+                        throw new ItemInventoryResultLessThanZeroException(
+                                inventoryItem.getNumOfItemInInventory(), 
+                                item.getItemAmount()
+                        );
+                    }
                 }
             }
-            System.out.println("Informed external inventory system to decrease inventory "
-                    + "quantity of item " + item.getItemId() + " by " + item.getItemAmount() + " units.");
+            
+            if (!itemFoundInInventory) {
+                //throw error.
+            }
+            
+            //System.out.println("Informed external inventory system to decrease inventory "
+            //        + "quantity of item " + item.getItemId() + " by " + item.getItemAmount() + " units.");
         }
     }
 

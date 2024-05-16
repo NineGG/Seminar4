@@ -43,29 +43,6 @@ public class ItemDTO {
     
     
     /**
-     * Creates an ItemDTO with an changed field.
-     * 
-     * @param itemAmount The amount of said item;
-     * @param itemId The item Id
-     * @param itemName The name of the item
-     * @param itemDescription A simple description of the item
-     * @param valueAddedTax The VAT
-     * @param itemPrice The cost of the item
-     * @param itemAmountChange The amount the item num has changed by.
-     */
-    public ItemDTO(int itemAmount, int itemId, String itemName, String itemDescription, double valueAddedTax, double itemPrice, int itemAmountChange){
-        
-        this.itemId = itemId;
-        this.itemName = itemName;
-        this.itemPrice = itemPrice;
-        this.itemAmount = itemAmount;
-        this.itemDescription = itemDescription;
-        this.valueAddedTax = valueAddedTax;
-        this.itemAmountChange = itemAmountChange;
-    }
-    
-    
-    /**
      * Creates an ItemDTO based on an External Inventory System Item.
      * @param inventoryItem The External Inventory System Item the ItemDTO is based on.
      */

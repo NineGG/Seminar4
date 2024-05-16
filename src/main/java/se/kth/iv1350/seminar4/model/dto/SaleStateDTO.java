@@ -13,15 +13,18 @@ import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 public class SaleStateDTO {
     private ItemDTO itemDTO;
     private double runningTotal;
+    private int itemAmountChange;
     
     /**
      * Creates an SaleStateDTO
      * @param itemDTO The itemDTO to record in the SaleStateDTO.
      * @param runningTotal The running total of the sale.
+     * @param itemAmountChange The amount the item changed by in the receipt.
      */
-    public SaleStateDTO(ItemDTO itemDTO, double runningTotal) {
+    public SaleStateDTO(ItemDTO itemDTO, double runningTotal, int itemAmountChange) {
         this.itemDTO = itemDTO;
         this.runningTotal = runningTotal;
+        this.itemAmountChange = itemAmountChange;
     }
     
     /**
@@ -38,6 +41,14 @@ public class SaleStateDTO {
      */
     public double getRunningTotal() {
         return runningTotal;
+    }
+    
+    /**
+     * Get the amount the receipt listing of the item changed by.
+     * @return The amount the item changed by.
+     */
+    public int getItemAmountChange() {
+        return itemAmountChange;
     }
     
 }

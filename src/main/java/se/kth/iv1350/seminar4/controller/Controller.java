@@ -4,14 +4,10 @@
  */
 package se.kth.iv1350.seminar4.controller;
 import se.kth.iv1350.seminar4.model.Sale;
-import se.kth.iv1350.seminar4.integration.ExternalInventorySystemAccessPoint;
+import se.kth.iv1350.seminar4.integration.*;
 import java.util.List;
-import se.kth.iv1350.seminar4.integration.ExternalAccountingSystemAccessPoint;
-import se.kth.iv1350.seminar4.integration.ItemInventoryResultLessThanZeroException;
-import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
-import se.kth.iv1350.seminar4.model.dto.ReceiptDTO;
-import se.kth.iv1350.seminar4.integration.NoMatchingItemByIdException;
-import se.kth.iv1350.seminar4.model.dto.SaleStateDTO;
+import se.kth.iv1350.seminar4.integration.dto.*;
+import se.kth.iv1350.seminar4.model.dto.*;;
 
 /**
  * A controller class.
@@ -52,7 +48,11 @@ public class Controller {
         List<ItemDTO> itemList = sale.getItemList();
         ReceiptDTO saleInfo = sale.getSaleInfo();
         accounting.updateAccounting(saleInfo);
-        externInv.updateInventory(itemList);
+        try{
+            externInv.updateInventory(itemList);
+        } catch (ItemNotFoundInInventoryException e){
+            //log and convert to other error type.
+        }
         return printReceipt;
     }
     

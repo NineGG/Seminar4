@@ -19,7 +19,7 @@ public class Receipt {
     private List<Item> itemList = new ArrayList<>();
     
     private double totalCostBeforeDiscount = 0;
-    private String dateAndTime;
+    private LocalDateTime dateAndTime;
     private double change = 0;
     private double payment = 0;
     private double percentageAfterDiscount = 1;
@@ -27,7 +27,6 @@ public class Receipt {
     private double discount = 0;
     private double costAfterDiscount = 0;
     private double totalVAT = 0;
-    
     
     
     /**
@@ -97,7 +96,7 @@ public class Receipt {
         itemList.add(new Item(itemDTO));
         recalculateReceipt();
         
-        return new SaleStateDTO(itemDTO, costAfterDiscount);
+        return new SaleStateDTO(itemDTO, costAfterDiscount, itemDTO.getItemAmount());
     }
     
     
@@ -115,7 +114,7 @@ public class Receipt {
                 item.increaseAmount(itemDTO.getItemAmount());
                 recalculateReceipt();
                 
-                return new SaleStateDTO(itemDTOCreator(item), costAfterDiscount);
+                return new SaleStateDTO(itemDTOCreator(item), costAfterDiscount, itemDTO.getItemAmount());
             }
         }
         return null;
@@ -149,13 +148,7 @@ public class Receipt {
         this.payment = payment;
         this.change = payment - this.totalCostBeforeDiscount;
         
-        dateAndTime = LocalDateTime.now().toString();
-        
-        //formatting the string
-        String[] dateAndTimeSplit1 = dateAndTime.split("T");
-        String[] dateAndTimeSplit2 = dateAndTimeSplit1[1].split("\\.");
-        
-        dateAndTime = dateAndTimeSplit1[0] + " " + dateAndTimeSplit2[0];
+        dateAndTime = LocalDateTime.now();
     }
     
     /**
@@ -171,8 +164,8 @@ public class Receipt {
             convertedItem = new ItemDTO(
                     item.getItemAmount(), 
                     item.getItemId(), 
-                    item.getItemDescription(), 
                     item.getItemName(), 
+                    item.getItemDescription(), 
                     item.getVAT(), 
                     item.getPrice()
             );
@@ -202,9 +195,9 @@ public class Receipt {
     /**
      * Gets the date and time the sale was concluded.
      * 
-     * @return A string representing the date and time.
+     * @return A LocalDateTime object.
      */
-    public String getDateAndTime(){
+    public LocalDateTime getDateAndTime(){
         return dateAndTime;
     }
     
@@ -270,30 +263,10 @@ public class Receipt {
     }
     
     
-    
     /**
-     * Gets the receipt and change.
-     * 
-     * @return A string representing the receipt and the change.
+     * Gets an DTO of the receipt.
+     * @return The ReceiptDTO.
      */
-    public String receiptAndChange(){ //Not allowed, to be removed and implimented in the View
-        
-        String str = "\n------------------ Begin receipt -------------------\n"
-                + "Time of Sale: " + dateAndTime + "\n\n";
-        
-        for (Item item : itemList){
-            str += item.getItemName() + "\t " + item.getItemAmount() + " x " + item.getPrice()
-                    + " SEK\n";
-        }
-        
-        str += "\nTotal: \t" + totalCostBeforeDiscount + " SEK\nVAT: \t" + totalVAT + " SEK" + 
-                "\n------------------ End receipt -------------------\n\n" +
-                "Change to give to the customer: " + change + " SEK";
-        
-        
-        return str;
-    }
-    
     public ReceiptDTO getReceiptDTO(){
         return new ReceiptDTO(this);
     }
