@@ -56,7 +56,7 @@ public class ReceiptDTO {
     }
     
     /**
-     * Gets the date and time the sale was concluded.
+     * Gets a copy of date and time the sale was concluded.
      * 
      * @return A LocalDateTime object representing the date and time.
      */
@@ -128,7 +128,7 @@ public class ReceiptDTO {
     }
     
     /**
-     * Returns an list containing ItemDTO's representing the items 
+     * Returns an list containing the ItemDTO's
      * that are saved on the ReceiptDTO object.
      * 
      * @return An ItemDTO List

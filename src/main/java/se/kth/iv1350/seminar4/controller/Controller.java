@@ -15,8 +15,10 @@ import se.kth.iv1350.seminar4.model.dto.*;;
  */
 public class Controller {
     private Sale sale; //might be better for it to be an list of sale objects.
-    private ExternalInventorySystemAccessPoint externInv = new ExternalInventorySystemAccessPoint();
-    private ExternalAccountingSystemAccessPoint accounting = new ExternalAccountingSystemAccessPoint();
+    private ExternalInventorySystemAccessPoint externInv = 
+            ExternalInventorySystemAccessPoint.getInstance();
+    private ExternalAccountingSystemAccessPoint accounting = 
+            ExternalAccountingSystemAccessPoint.getInstance();
     
     /**
      * Starts a new sale.

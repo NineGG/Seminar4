@@ -16,8 +16,18 @@ import se.kth.iv1350.seminar4.model.dto.ReceiptDTO;
  * @author nilse
  */
 public class ExternalAccountingSystemAccessPoint {
+    private static final ExternalAccountingSystemAccessPoint INSTANCE = 
+            new ExternalAccountingSystemAccessPoint();
+    private final List<ReceiptDTO> database = new ArrayList<>();
     
-    private List<ReceiptDTO> database = new ArrayList<>();
+    public static ExternalAccountingSystemAccessPoint getInstance(){
+        return INSTANCE;
+    }
+    
+    private ExternalAccountingSystemAccessPoint() {
+    
+    }
+    
     
     /**
      * Sends the receiptDTO to the accounting system.
@@ -26,6 +36,5 @@ public class ExternalAccountingSystemAccessPoint {
      */
     public void updateAccounting(ReceiptDTO receiptDTO){
         database.add(receiptDTO);
-        System.out.println("Sale info sent to accounting system");
     }
 }
