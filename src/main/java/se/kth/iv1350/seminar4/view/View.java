@@ -14,7 +14,7 @@ import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 import se.kth.iv1350.seminar4.model.dto.SaleStateDTO;
 
 /**
- * A simple View Class.
+ * A simple View Class. PULL TEST CHANGE
  * @author nilse
  */
 public class View{
