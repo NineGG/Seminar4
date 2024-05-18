@@ -29,6 +29,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <exec.mainClass>se.kth.iv1350.seminar3.Seminar3</exec.mainClass>
+        <exec.mainClass>se.kth.iv1350.seminar4.startup.Main</exec.mainClass>
     </properties>
 </project>
