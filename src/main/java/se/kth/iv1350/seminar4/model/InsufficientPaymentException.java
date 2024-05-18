@@ -19,6 +19,7 @@ public class InsufficientPaymentException extends Exception {
      * @param cost The cost of the sale that caused the exception
      */
     public InsufficientPaymentException(double payment, double cost) {
+        super("Attempted to pay with insufficient payment, attempted to pay: " + payment + ", requires: " + cost);
         this.cost = cost;
         this.payment = payment;
     }

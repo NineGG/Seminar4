@@ -19,7 +19,6 @@ public class ItemDTO {
     private String itemName;
     private int itemAmount;
     private String itemDescription;
-    private int itemAmountChange = 0;
     
     /**
      * Creates an ItemDTO.

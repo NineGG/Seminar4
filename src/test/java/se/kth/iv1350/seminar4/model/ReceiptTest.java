@@ -122,10 +122,30 @@ public class ReceiptTest {
     @Test
     public void testPaymentEqualsPaidAmount() {
         System.out.println("payment");
+        testReceipt.addItemToReceipt(testItemDTO);
+        
         double payment = 100.0;
-        testReceipt.payment(payment);
+        try {
+            testReceipt.payment(payment);
+        } catch (Exception e) {
+            fail("Threw an exception");
+        }
         double result = testReceipt.getPayment();
         assertEquals(payment, result, "Payment on receipt doesn't equal the paid amount");
+    }
+    
+    @Test public void testPaymentThrowsCorrectlyWhenPaidTooLittle() {
+        System.out.println("payment exception");
+        
+        testReceipt.addItemToReceipt(testItemDTO);
+        double payment = 0;
+        try {
+            testReceipt.payment(payment);
+            fail("Failed, did not throw");
+        } catch (InsufficientPaymentException e) {
+        } catch (Exception e) {
+            fail("Threw but threw an unexpected exception");
+        }
     }
     
     @Test

@@ -143,10 +143,15 @@ public class Receipt {
      * Adds the paid amount to the receipt.
      * 
      * @param payment The paid amount in SEK.
+     * @throws InsufficientPaymentException When payment is insufficient.
      */
-    void payment(double payment){
+    void payment(double payment) throws InsufficientPaymentException{
+        
+        if (payment < this.costAfterDiscount) 
+            throw new InsufficientPaymentException(payment, this.costAfterDiscount);
+        
         this.payment = payment;
-        this.change = payment - this.totalCostBeforeDiscount;
+        this.change = payment - this.costAfterDiscount;
         
         dateAndTime = LocalDateTime.now();
     }

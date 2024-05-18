@@ -17,6 +17,7 @@ public class NoMatchingItemByIdException extends RuntimeException{
      * @param itemId 
      */
     public NoMatchingItemByIdException(int itemId) {
+        super("Failed to find an item with id: " + itemId);
         this.itemId = itemId;
     }
     

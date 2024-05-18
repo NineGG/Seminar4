@@ -8,8 +8,9 @@ import se.kth.iv1350.seminar4.model.Sale;
 import se.kth.iv1350.seminar4.integration.*;
 import java.util.List;
 import se.kth.iv1350.seminar4.integration.dto.*;
+import se.kth.iv1350.seminar4.model.InsufficientPaymentException;
 import se.kth.iv1350.seminar4.model.dto.*;
-import utilities.LogWriter;
+import se.kth.iv1350.seminar4.utilities.LogWriter;
 ;
 
 /**
@@ -26,6 +27,10 @@ public class Controller {
     
     private LogWriter logger;
     
+    /**
+     * Creates a new Controller instance
+     * @throws IOException if LogWriter is unable to start.
+     */
     public Controller() throws IOException {
         this.logger = new LogWriter();
     }
@@ -50,13 +55,14 @@ public class Controller {
     /**
      * A simple payment processing method.
      * 
-     * @param money The amount paid in SEK.
+     * @param payment The amount paid in SEK.
      * 
      * @return A string representing the receipt and the change
      * @throws ItemInventoryResultLessThanZeroException thrown if the inventory result in a lower stock than 0.
+     * @throws InsufficientPaymentException When payment is insufficient.
      */
-    public ReceiptDTO payment(int money) throws ItemInventoryResultLessThanZeroException{
-        ReceiptDTO printReceipt = sale.payment(money);
+    public ReceiptDTO payment(int payment) throws ItemInventoryResultLessThanZeroException, InsufficientPaymentException{
+        ReceiptDTO printReceipt = sale.payment(payment);
         List<ItemDTO> itemList = sale.getItemList();
         ReceiptDTO saleInfo = sale.getSaleInfo();
         accounting.updateAccounting(saleInfo);
@@ -78,8 +84,10 @@ public class Controller {
         try {
             itemDTO = externInv.retrieveItem(itemId, 1);
         } catch (NoMatchingItemByIdException e) {
+            logger.log(e);
             throw new ActionFailedException("Could not find item", e);
         } catch (DatabaseUnresponsiveException e) {
+            logger.log(e);
             throw new ActionFailedException("Could not connect to database", e);
         }
         
@@ -101,8 +109,10 @@ public class Controller {
         try {
             itemDTO = externInv.retrieveItem(itemId, amount);
         } catch (NoMatchingItemByIdException e) {
+            logger.log(e);
             throw new ActionFailedException("Could not find item", e);
         } catch (DatabaseUnresponsiveException e) {
+            logger.log(e);
             throw new ActionFailedException("Could not connect to database", e);
         }
         

@@ -4,6 +4,8 @@
  */
 package se.kth.iv1350.seminar4.integration;
 
+import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
+
 
 /**
  * Thrown when the an update to an item stock in the External Inventory System will result in a stock that is less than zero
@@ -11,35 +13,35 @@ package se.kth.iv1350.seminar4.integration;
  */
 public class ItemInventoryResultLessThanZeroException extends Exception {
     
-    private final int inventoryCount;
-    private final int attemptedNumOfItemsToRemove;
+    private final ItemDTO inventoryItemDTO;
+    private final ItemDTO itemDTO;
     
     /**
      * Creates an ItemInventoryResultLessThanZeroException.
-     * @param inventoryCount The state of the inventory before the attempted change.
-     * @param attemptedNumOfItemsToRemove The amount of items attempted to be removed from the system.
+     * @param inventoryItemDTO The state of the inventory before the attempted change.
+     * @param itemDTO The DTO that attempted to update the inventory.
      */
-    public ItemInventoryResultLessThanZeroException(int inventoryCount, int attemptedNumOfItemsToRemove) {
-        super("External Inventory is: " + inventoryCount + " and " + attemptedNumOfItemsToRemove + 
+    public ItemInventoryResultLessThanZeroException(ItemDTO inventoryItemDTO, ItemDTO itemDTO) {
+        super("External Inventory is: " + inventoryItemDTO.getItemAmount() + " and " + itemDTO.getItemAmount() + 
                 " was attempted to be removed from it");
-        this.inventoryCount = inventoryCount;
-        this.attemptedNumOfItemsToRemove = attemptedNumOfItemsToRemove;
+        this.inventoryItemDTO = inventoryItemDTO;
+        this.itemDTO = itemDTO;
     }
     
     /**
-     * Gets the inventory count of the item in the inventory system.
-     * @return The inventory count.
+     * Gets the state of item in the inventory system.
+     * @return The ItemDTO of the inventory item.
      */
-    public int getInventoryCount() {
-        return inventoryCount;
+    public ItemDTO getInventoryItemDTO() {
+        return inventoryItemDTO;
     }
     
     /**
-     * Gets the attempted amount of items to remove from the inventory system.
-     * @return The amount of attempted removed items.
+     * Gets the ItemDTO that attempted to update the system.
+     * @return The ItemDTO.
      */
-    public int getattemptedNumOfItemsToRemove() {
-        return attemptedNumOfItemsToRemove;
+    public ItemDTO getItemDTO() {
+        return itemDTO;
     }
     
 }

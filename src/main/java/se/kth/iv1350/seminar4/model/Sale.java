@@ -13,7 +13,6 @@ import se.kth.iv1350.seminar4.model.dto.*;
  */
 public class Sale {
     private Receipt receipt;
-    private int customerId;
 
     /**
      * Creates a Sale instance and a Receipt instance to go with it.
@@ -34,16 +33,6 @@ public class Sale {
         } else{
             return receipt.addItemToReceipt(itemDTO);
         }
-//        if (amount > 1){
-//            displayInfo = "Add " + amount + " items with item id " + item.getItemId() + ": \n";
-//        } else{
-//            displayInfo = "Add " + amount + " item with item id " + item.getItemId() + ": \n";
-//        }
-//                
-//        displayInfo += "Item Id: " + item.getItemId() + "\n" + "Item Name: " + item.getItemName() + "\n" + 
-//                "VAT: " + (int)(item.getVAT()*100) + "% \n" + "Item Cost: " + item.getPrice() + " SEK \n" + 
-//                "Item description: " + item.getItemDescription() + "\n\n" + "Running Total (incl VAT): " + 
-//                receipt.getCurrentCost() + " SEK \n" + "Total VAT: " + receipt.getTotalVAT() + " SEK\n";
     }
     
     /**
@@ -71,8 +60,9 @@ public class Sale {
      * 
      * @param payment The paid amount in SEK.
      * @return A string representing the receipt and the change.
+     * @throws InsufficientPaymentException When payment is insufficient.
      */
-    public ReceiptDTO payment(int payment){
+    public ReceiptDTO payment(int payment) throws InsufficientPaymentException{
         receipt.payment(payment);
         return receipt.getReceiptDTO();
     }

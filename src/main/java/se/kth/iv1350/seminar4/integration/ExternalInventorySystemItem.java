@@ -93,7 +93,7 @@ public class ExternalInventorySystemItem {
      */
     public void updateInventory(ItemDTO itemDTO) throws ItemInventoryResultLessThanZeroException {
         if (this.numOfItemInInventory - itemDTO.getItemAmount() < 0) 
-            throw new ItemInventoryResultLessThanZeroException(this.numOfItemInInventory, itemDTO.getItemAmount());
+            throw new ItemInventoryResultLessThanZeroException(new ItemDTO(this), itemDTO);
         this.numOfItemInInventory -= itemDTO.getItemAmount();
     }
 }

@@ -78,6 +78,20 @@ public class ExternalInventorySystemAccessPoint {
         throw new NoMatchingItemByIdException(itemId);
     }
     
+    
+    public ItemDTO retrieveItemStatus(int itemId) throws NoMatchingItemByIdException, 
+                                                            DatabaseUnresponsiveException{
+        if (itemId == 123)
+            throw new DatabaseUnresponsiveException();
+        for (ExternalInventorySystemItem item : inventory){
+            if (itemId == item.getItemId()){
+                return new ItemDTO(item);
+            } 
+        }
+        
+        throw new NoMatchingItemByIdException(itemId);
+    }
+    
     /**
      * Updates the ExternalInventorySystem based on the items provided.
      * 
@@ -95,8 +109,8 @@ public class ExternalInventorySystemAccessPoint {
                     
                     if (inventoryItem.getNumOfItemInInventory() < item.getItemAmount()){
                         throw new ItemInventoryResultLessThanZeroException(
-                                inventoryItem.getNumOfItemInInventory(), 
-                                item.getItemAmount()
+                                new ItemDTO(inventoryItem),
+                                item
                         );
                     }
                 }
@@ -107,6 +121,8 @@ public class ExternalInventorySystemAccessPoint {
             set.update();
         }
     }
+    
+    
 
     
 }
