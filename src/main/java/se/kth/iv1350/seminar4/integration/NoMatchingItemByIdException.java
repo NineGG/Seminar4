@@ -5,30 +5,26 @@
 package se.kth.iv1350.seminar4.integration;
 
 /**
- * Thrown when the ExternalInventorySystem could not find an item that matches the item identifier provided.
- * @author nilse
+ * Thrown if item with matching id doesn't exist.
+ * @author Nils Ekenberg
  */
-public class NoMatchingItemByIdException extends Exception {
+public class NoMatchingItemByIdException extends RuntimeException{
     
-    private int itemId;
-    
+    private final int itemId;
     
     /**
-     * Creates an No Matching Item By Id Exception object.
-     * @param itemId The item identifier that didn't result in an matching item.
+     * creates an NoMatchingItemByIdException instance.
+     * @param itemId 
      */
     public NoMatchingItemByIdException(int itemId) {
         this.itemId = itemId;
     }
     
-    
     /**
-     * Gets the item identifier that could not result in an item.
-     * 
-     * @return The item identifier.
+     * Gets the itemId that is responsible for the exception.
+     * @return The itemId
      */
-    public int getItemId() {
+    public int getItemId(){
         return itemId;
     }
-    
 }

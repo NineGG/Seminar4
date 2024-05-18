@@ -43,7 +43,7 @@ public class Receipt {
     /**
      * Gets the flat discount that is applied.
      * 
-     * @return 
+     * @return The flat discount.
      */
     public double getFlatDiscount(){
         return flatDiscount;

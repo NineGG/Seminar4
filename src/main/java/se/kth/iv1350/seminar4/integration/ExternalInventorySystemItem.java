@@ -8,16 +8,16 @@ import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 
 
 /**
- *
+ * An database class that stores information and keeps track of an items inventory.
  * @author nilse
  */
 public class ExternalInventorySystemItem {
     private int numOfItemInInventory;
-    private int itemId;
-    private double itemPrice;
-    private String itemName;
-    private String itemDescription;
-    private double valueAddedTax;
+    private final int itemId;
+    private final double itemPrice;
+    private final String itemName;
+    private final String itemDescription;
+    private final double valueAddedTax;
     
     /**
      * Creates an item object
@@ -89,8 +89,11 @@ public class ExternalInventorySystemItem {
     /**
      * Updates inventory of the inventoryitem.
      * @param itemDTO An itemDTO of said item.
+     * @throws ItemInventoryResultLessThanZeroException If operation results in inventory going into the negatives.
      */
-    public void updateInventory(ItemDTO itemDTO) {
+    public void updateInventory(ItemDTO itemDTO) throws ItemInventoryResultLessThanZeroException {
+        if (this.numOfItemInInventory - itemDTO.getItemAmount() < 0) 
+            throw new ItemInventoryResultLessThanZeroException(this.numOfItemInInventory, itemDTO.getItemAmount());
         this.numOfItemInInventory -= itemDTO.getItemAmount();
     }
 }

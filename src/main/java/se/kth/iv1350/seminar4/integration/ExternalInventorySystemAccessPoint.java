@@ -24,6 +24,10 @@ public class ExternalInventorySystemAccessPoint {
     private double valueAddedTax;
     private int itemId;
     
+    /**
+     * Gets the singleton instance of ExternalInventorySystemAccessPoint.
+     * @return The instance.
+     */
     public static ExternalInventorySystemAccessPoint getInstance(){
         return INSTANCE;
     }
@@ -53,19 +57,25 @@ public class ExternalInventorySystemAccessPoint {
      * @param itemId The id of the item requested.
      * @param itemAmount The number of said item to retrieve.
      * @return The item object.
-     * @throws NoMatchingItemByIdException When no item with the provided id is found.
+     * @throws NoMatchingItemByIdException If no item with that id was found.
+     * @throws DatabaseUnresponsiveException If the database is unresponsive.
      */
-    public ItemDTO retrieveItem(int itemId, int itemAmount) throws NoMatchingItemByIdException {
+    public ItemDTO retrieveItem(int itemId, int itemAmount) throws NoMatchingItemByIdException, 
+                                                            DatabaseUnresponsiveException{
+        if (itemId == 123)
+            throw new DatabaseUnresponsiveException();
         for (ExternalInventorySystemItem item : inventory){
             if (itemId == item.getItemId()){
                 itemDescription = item.getItemDescription();
                 itemName = item.getItemName();
                 price = item.getPrice();
                 valueAddedTax = item.getVAT();
+                
+                return new ItemDTO(itemAmount, itemId, itemName, itemDescription, valueAddedTax, price);
             } 
         }
         
-        return new ItemDTO(itemAmount, itemId, itemName, itemDescription, valueAddedTax, price);
+        throw new NoMatchingItemByIdException(itemId);
     }
     
     /**
@@ -73,19 +83,14 @@ public class ExternalInventorySystemAccessPoint {
      * 
      * @param itemList List of Item objects.
      * @throws ItemInventoryResultLessThanZeroException thrown if the inventory update would result in an inventory less than 0
-     * @throws ItemNotFoundInInventoryException Thrown if there was no Inventory Item with equating itemId to one of the items.
      */
-    public void updateInventory(List<ItemDTO> itemList) throws ItemInventoryResultLessThanZeroException, 
-                                                        ItemNotFoundInInventoryException {
+    public void updateInventory(List<ItemDTO> itemList) throws ItemInventoryResultLessThanZeroException {
         
         List<UpdateQueueSet> queue = new ArrayList<>();
-        boolean itemFoundInInventory;
         
         for(ItemDTO item : itemList){
-            itemFoundInInventory = false;
             for(ExternalInventorySystemItem inventoryItem : inventory){
                 if (inventoryItem.getItemId() == item.getItemId()){
-                    itemFoundInInventory = true;
                     queue.add(new UpdateQueueSet(item, inventoryItem));
                     
                     if (inventoryItem.getNumOfItemInInventory() < item.getItemAmount()){
@@ -95,10 +100,6 @@ public class ExternalInventorySystemAccessPoint {
                         );
                     }
                 }
-            }
-            
-            if (!itemFoundInInventory) {
-                throw new ItemNotFoundInInventoryException(item);
             }
         }
         

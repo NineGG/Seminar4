@@ -3,22 +3,32 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package se.kth.iv1350.seminar4.controller;
+import java.io.IOException;
 import se.kth.iv1350.seminar4.model.Sale;
 import se.kth.iv1350.seminar4.integration.*;
 import java.util.List;
 import se.kth.iv1350.seminar4.integration.dto.*;
-import se.kth.iv1350.seminar4.model.dto.*;;
+import se.kth.iv1350.seminar4.model.dto.*;
+import utilities.LogWriter;
+;
 
 /**
  * A controller class.
  * @author nilse
  */
 public class Controller {
-    private Sale sale; //might be better for it to be an list of sale objects.
+    private Sale sale;
     private ExternalInventorySystemAccessPoint externInv = 
             ExternalInventorySystemAccessPoint.getInstance();
+    
     private ExternalAccountingSystemAccessPoint accounting = 
             ExternalAccountingSystemAccessPoint.getInstance();
+    
+    private LogWriter logger;
+    
+    public Controller() throws IOException {
+        this.logger = new LogWriter();
+    }
     
     /**
      * Starts a new sale.
@@ -50,11 +60,7 @@ public class Controller {
         List<ItemDTO> itemList = sale.getItemList();
         ReceiptDTO saleInfo = sale.getSaleInfo();
         accounting.updateAccounting(saleInfo);
-        try{
-            externInv.updateInventory(itemList);
-        } catch (ItemNotFoundInInventoryException e){
-            //log and convert to other error type.
-        }
+        externInv.updateInventory(itemList);
         return printReceipt;
     }
     
@@ -64,10 +70,19 @@ public class Controller {
      * @param itemId The id of the item.
      * 
      * @return A SaleStateDTO containing information about the item and current total of the sale.
-     * @throws NoMatchingItemByIdException When no item with the provided id is found.
+     * @throws ActionFailedException When no item with the provided id is found.
      */
-    public SaleStateDTO addItem(int itemId) throws NoMatchingItemByIdException {
-        ItemDTO itemDTO = externInv.retrieveItem(itemId, 1);
+    public SaleStateDTO addItem(int itemId) throws ActionFailedException {
+        ItemDTO itemDTO;
+        
+        try {
+            itemDTO = externInv.retrieveItem(itemId, 1);
+        } catch (NoMatchingItemByIdException e) {
+            throw new ActionFailedException("Could not find item", e);
+        } catch (DatabaseUnresponsiveException e) {
+            throw new ActionFailedException("Could not connect to database", e);
+        }
+        
         return sale.addItemToReceipt(itemDTO);
     }
     
@@ -78,10 +93,19 @@ public class Controller {
      * @param amount The amount of said item.
      * 
      * @return A SaleStateDTO containing information about the item and current total of the sale.
-     * @throws NoMatchingItemByIdException When no item with the provided id is found.
+     * @throws ActionFailedException When no item with the provided id is found.
      */
-    public SaleStateDTO addItem(int itemId, int amount) throws NoMatchingItemByIdException {
-        ItemDTO itemDTO = externInv.retrieveItem(itemId, amount);
+    public SaleStateDTO addItem(int itemId, int amount) throws ActionFailedException {
+        ItemDTO itemDTO;
+        
+        try {
+            itemDTO = externInv.retrieveItem(itemId, amount);
+        } catch (NoMatchingItemByIdException e) {
+            throw new ActionFailedException("Could not find item", e);
+        } catch (DatabaseUnresponsiveException e) {
+            throw new ActionFailedException("Could not connect to database", e);
+        }
+        
         return sale.addItemToReceipt(itemDTO);
     }
 }

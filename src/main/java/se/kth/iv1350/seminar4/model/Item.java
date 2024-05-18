@@ -38,8 +38,8 @@ public class Item {
         this.valueAddedTax = valueAddedTax;
     }
     /**
-     * Creates an item object from an itemDTO
-     * @param itemDTO
+     * Creates an Item object from an ItemDTO
+     * @param itemDTO The ItemDTO to create an Item from.
      */
     public Item(ItemDTO itemDTO){
         this.itemAmount = itemDTO.getItemAmount();

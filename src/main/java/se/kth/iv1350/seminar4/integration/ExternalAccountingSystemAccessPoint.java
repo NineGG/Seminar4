@@ -20,6 +20,10 @@ public class ExternalAccountingSystemAccessPoint {
             new ExternalAccountingSystemAccessPoint();
     private final List<ReceiptDTO> database = new ArrayList<>();
     
+    /**
+     * Gets the singleton instance of ExternalAccountingSystemAccessPoint.
+     * @return The instance.
+     */
     public static ExternalAccountingSystemAccessPoint getInstance(){
         return INSTANCE;
     }
@@ -27,7 +31,6 @@ public class ExternalAccountingSystemAccessPoint {
     private ExternalAccountingSystemAccessPoint() {
     
     }
-    
     
     /**
      * Sends the receiptDTO to the accounting system.

@@ -10,8 +10,8 @@ package se.kth.iv1350.seminar4.model;
  */
 public class InsufficientPaymentException extends Exception {
     
-    private double cost;
-    private double payment;
+    private final double cost;
+    private final double payment;
     
     /**
      * creates an Insufficient Payment Exception
@@ -25,9 +25,9 @@ public class InsufficientPaymentException extends Exception {
     
     
     /**
-     * A getter method for the cost of the sale
+     * Gets the total cost of the sale
      * 
-     * @return 
+     * @return The cost
      */
     public double getCost(){
         return this.cost;
@@ -35,7 +35,7 @@ public class InsufficientPaymentException extends Exception {
     
     
     /**
-     * A getter method for the payment total.
+     * Gets the attempted payment amount.
      * 
      * @return The payment made. 
      */

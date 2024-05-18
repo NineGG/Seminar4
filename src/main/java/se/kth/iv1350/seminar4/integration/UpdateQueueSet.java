@@ -21,9 +21,10 @@ class UpdateQueueSet{
     }
 
     /**
-     * Updates the ExternalInventorySystemItem itemcount.
+     * Updates the inventory of the ExternalInventorySystemItem object in the set.
+     * @throws ItemInventoryResultLessThanZeroException If operation results in inventory going into the negatives.
      */
-    public void update(){
+    public void update() throws ItemInventoryResultLessThanZeroException {
         inventoryItem.updateInventory(itemDTO);
     }
 }
