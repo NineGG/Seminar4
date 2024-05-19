@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package se.kth.iv1350.seminar4.model;
+import java.util.ArrayList;
 import java.util.List;
 import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 import se.kth.iv1350.seminar4.model.dto.*;
@@ -14,6 +15,7 @@ import se.kth.iv1350.seminar4.integration.ExternalInventorySystemAccessPoint;
  */
 public class Sale {
     private final Receipt receipt;
+    private final List<Observer> observerList;
 
     /**
      * Creates a Sale instance and a Receipt instance to go with it.
@@ -21,6 +23,7 @@ public class Sale {
     public Sale(){        
         receipt = new Receipt();
         ExternalInventorySystemAccessPoint.getInstance();
+        observerList = new ArrayList<>();
     }
     /**
      * Adds an item to the receipt, 
@@ -36,6 +39,14 @@ public class Sale {
         } else{
             return receipt.addItemToReceipt(itemDTO);
         }
+    }
+    
+    /**
+     * Adds a new observer to the sale.
+     * @param obs The observer
+     */
+    public void addObserver(Observer obs) {
+        observerList.add(obs);
     }
     
     /**
@@ -59,7 +70,7 @@ public class Sale {
     
     
     /**
-     * Some payment logic.
+     * Payment of the sale.
      * 
      * @param payment The paid amount in SEK.
      * @return A string representing the receipt and the change.
@@ -67,7 +78,15 @@ public class Sale {
      */
     public ReceiptDTO payment(int payment) throws InsufficientPaymentException{
         receipt.payment(payment);
-        return receipt.getReceiptDTO();
+        ReceiptDTO receiptDTO = receipt.getReceiptDTO();
+        updateObservers(receiptDTO);
+        return receiptDTO;
+    }
+    
+    private void updateObservers(ReceiptDTO receiptDTO) {
+        for (Observer obs : observerList) {
+            obs.updateTotalRevenue(receiptDTO.getCostAfterDiscount());
+        }
     }
     
     /**

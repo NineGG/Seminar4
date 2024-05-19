@@ -1,0 +1,8 @@
+
+-------Program start: 2024-05-19 21:55-------
+New sale completed. Revenue from sale: 189.0
+Total revenue since program start: 189.0
+
+New sale completed. Revenue from sale: 189.0
+Total revenue since program start: 378.0
+

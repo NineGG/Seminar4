@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.List;
 import se.kth.iv1350.seminar4.controller.ActionFailedException;
 import se.kth.iv1350.seminar4.controller.Controller;
 import se.kth.iv1350.seminar4.integration.ItemInventoryResultLessThanZeroException;
@@ -15,6 +17,7 @@ import se.kth.iv1350.seminar4.model.dto.ReceiptDTO;
 import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 import se.kth.iv1350.seminar4.model.InsufficientPaymentException;
 import se.kth.iv1350.seminar4.model.ItemAmountOverInventoryLimitException;
+import se.kth.iv1350.seminar4.model.Observer;
 import se.kth.iv1350.seminar4.model.dto.SaleStateDTO;
 
 /**
@@ -28,6 +31,9 @@ public class View{
     
     private SaleStateDTO saleState;
     
+    private final TotalRevenueFileOutput revenueFileOutput;
+    private final TotalRevenueView revenueView;
+    
     
     /**
      * Creates a View object.
@@ -36,6 +42,9 @@ public class View{
      */
     public View(Controller contr) throws IOException{
         this.contr = contr;
+        
+        revenueFileOutput = new TotalRevenueFileOutput();
+        revenueView = new TotalRevenueView();
     }
     
     private void saleStatePrinter(SaleStateDTO saleState) {
@@ -83,7 +92,7 @@ public class View{
      */
     public void fakeCustomer(){
         
-        contr.startSale();
+        startSale();
         
         addItem(423);
         addItem(231,3);
@@ -116,6 +125,7 @@ public class View{
         endSale();
         
         pay(20);
+        pay(500);
         
         System.out.println("End of fakeCustomerTwo interaction");
         System.out.println();
@@ -163,13 +173,16 @@ public class View{
             + e.getInventoryItemDTO().getItemAmount() + ", perhaps you scanned too many items? If not plase contact a developer.");
             System.out.println();
         } catch (InsufficientPaymentException e) {
-            System.out.println("Insufficient funds, attempted to pay " + e.getPayment() + "SEK, requires " + e.getCost() + " SEK");
+            System.out.println("Insufficient funds, attempted to pay " + e.getPayment() + " SEK, requires " + e.getCost() + " SEK");
             System.out.println();
         }
     }
     
     private void startSale() {
         contr.startSale();
+        contr.addObserver(revenueView);
+        contr.addObserver(revenueFileOutput);
+        
         System.out.println("Starting new sale");
         System.out.println();
     }

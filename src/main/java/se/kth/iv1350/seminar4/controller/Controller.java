@@ -10,6 +10,7 @@ import java.util.List;
 import se.kth.iv1350.seminar4.integration.dto.*;
 import se.kth.iv1350.seminar4.model.InsufficientPaymentException;
 import se.kth.iv1350.seminar4.model.ItemAmountOverInventoryLimitException;
+import se.kth.iv1350.seminar4.model.Observer;
 import se.kth.iv1350.seminar4.model.dto.*;
 import se.kth.iv1350.seminar4.utilities.LogWriter;
 ;
@@ -25,6 +26,14 @@ public class Controller {
     private final ExternalAccountingSystemAccessPoint accounting;
     
     private final LogWriter logger;
+    
+    /**
+     * Adds an observer to the sale.
+     * @param obs The observer.
+     */
+    public void addObserver(Observer obs) {
+        sale.addObserver(obs);
+    }
     
     /**
      * Creates a new Controller instance
