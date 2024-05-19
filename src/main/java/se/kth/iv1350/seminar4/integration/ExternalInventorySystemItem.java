@@ -89,11 +89,8 @@ public class ExternalInventorySystemItem {
     /**
      * Updates inventory of the inventoryitem.
      * @param itemDTO An itemDTO of said item.
-     * @throws ItemInventoryResultLessThanZeroException If operation results in inventory going into the negatives.
      */
     public void updateInventory(ItemDTO itemDTO) throws ItemInventoryResultLessThanZeroException {
-        if (this.numOfItemInInventory - itemDTO.getItemAmount() < 0) 
-            throw new ItemInventoryResultLessThanZeroException(new ItemDTO(this), itemDTO);
         this.numOfItemInInventory -= itemDTO.getItemAmount();
     }
 }
