@@ -13,11 +13,17 @@ import se.kth.iv1350.seminar4.model.Observer;
 public class TotalRevenueView implements Observer {
 
     private double totalRevenueFromAllSales;
-    
+    /**
+     * Creates a new TotalRevenueView instance
+     */
     public TotalRevenueView() {
         totalRevenueFromAllSales = 0;
     }
     
+    /**
+     * Prints to System.out based on the total revenue from sale and revenue from program start.
+     * @param totalRevenueFromSale The total revenue from the sale.
+     */
     @Override
     public void updateTotalRevenue(double totalRevenueFromSale) {
         totalRevenueFromAllSales += totalRevenueFromSale;

@@ -41,6 +41,11 @@ public class TotalRevenueFileOutput implements Observer{
         return dateTime.format(formatter);
     }
 
+    
+    /**
+     * Prints to file based on the total revenue from sale and revenue from program start.
+     * @param totalRevenueFromSale The total revenue from sale.
+     */
     @Override
     public void updateTotalRevenue(double totalRevenueFromSale) {
         totalRevenueFromAllSales += totalRevenueFromSale;
