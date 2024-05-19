@@ -11,7 +11,7 @@ import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
  * Thrown when the an update to an item stock in the External Inventory System will result in a stock that is less than zero
  * @author nilse
  */
-public class ItemInventoryResultLessThanZeroException extends Exception {
+public class ItemInventoryResultLessThanZeroException extends RuntimeException {
     
     private final ItemDTO inventoryItemDTO;
     private final ItemDTO itemDTO;

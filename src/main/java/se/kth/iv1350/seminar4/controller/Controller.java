@@ -68,15 +68,22 @@ public class Controller {
      * @param payment The amount paid in SEK.
      * 
      * @return A string representing the receipt and the change
-     * @throws ItemInventoryResultLessThanZeroException thrown if the inventory result in a lower stock than 0.
+     * @throws ActionFailedException When database update would result in negative inventory.
      * @throws InsufficientPaymentException When payment is insufficient.
      */
-    public ReceiptDTO payment(int payment) throws ItemInventoryResultLessThanZeroException, InsufficientPaymentException{
-        ReceiptDTO printReceipt = sale.payment(payment);
-        List<ItemDTO> itemList = sale.getItemList();
-        ReceiptDTO saleInfo = sale.getSaleInfo();
-        accounting.updateAccounting(saleInfo);
-        externInv.updateInventory(itemList);
+    public ReceiptDTO payment(int payment) throws ActionFailedException, InsufficientPaymentException{
+        
+        ReceiptDTO printReceipt;
+        try {
+            printReceipt = sale.payment(payment);
+            List<ItemDTO> itemList = sale.getItemList();
+            ReceiptDTO saleInfo = sale.getSaleInfo();
+            accounting.updateAccounting(saleInfo);
+            externInv.updateInventory(itemList);
+        } catch (ItemInventoryResultLessThanZeroException e) {
+            logger.log(e);
+            throw new ActionFailedException("Database call would result in negative inventory", e);
+        }
         return printReceipt;
     }
     
@@ -86,7 +93,7 @@ public class Controller {
      * @param itemId The id of the item.
      * 
      * @return A SaleStateDTO containing information about the item and current total of the sale.
-     * @throws ActionFailedException When no item with the provided id is found.
+     * @throws ActionFailedException When no item with the provided id is found or could not connect to database.
      * @throws ItemAmountOverInventoryLimitException If item amount attempts to go above allowed Inventory limit.
      */
     public SaleStateDTO addItem(int itemId) throws ActionFailedException, ItemAmountOverInventoryLimitException {
@@ -113,7 +120,7 @@ public class Controller {
      * @param amount The amount of said item.
      * 
      * @return A SaleStateDTO containing information about the item and current total of the sale.
-     * @throws ActionFailedException When no item with the provided id is found.
+     * @throws ActionFailedException When no item with the provided id is found or could not connect to database.
      * @throws ItemAmountOverInventoryLimitException If item amount attempts to go above allowed Inventory limit.
      */
     public SaleStateDTO addItem(int itemId, int amount) throws ActionFailedException, ItemAmountOverInventoryLimitException {
@@ -129,6 +136,6 @@ public class Controller {
         } catch (DatabaseUnresponsiveException e) {
             logger.log(e);
             throw new ActionFailedException("Could not connect to database", e);
-        }
+        } 
     }
 }

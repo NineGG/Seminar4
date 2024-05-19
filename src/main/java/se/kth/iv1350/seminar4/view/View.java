@@ -175,6 +175,9 @@ public class View{
         } catch (InsufficientPaymentException e) {
             System.out.println("Insufficient funds, attempted to pay " + e.getPayment() + " SEK, requires " + e.getCost() + " SEK");
             System.out.println();
+        } catch (ActionFailedException e) {
+            System.out.println("Action could not be performed");
+            System.out.println();
         }
     }
     
