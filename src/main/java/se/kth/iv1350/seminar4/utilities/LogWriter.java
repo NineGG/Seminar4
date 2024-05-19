@@ -29,6 +29,7 @@ public class LogWriter {
         String message = e.getMessage() + " Exception Thrown: " + time();
         logFile.println(message);
         e.printStackTrace(logFile);
+        logFile.flush();
     }
     
     private String time(){
