@@ -98,9 +98,8 @@ public class ExternalInventorySystemAccessPoint {
      * Updates the ExternalInventorySystem based on the items provided.
      * 
      * @param itemList List of Item objects.
-     * @throws ItemInventoryResultLessThanZeroException thrown if the inventory update would result in an inventory less than 0
      */
-    public void updateInventory(List<ItemDTO> itemList) throws ItemInventoryResultLessThanZeroException {
+    public void updateInventory(List<ItemDTO> itemList) {
         
         List<UpdateQueueSet> queue = new ArrayList<>();
         
