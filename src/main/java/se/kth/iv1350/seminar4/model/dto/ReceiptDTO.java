@@ -14,17 +14,17 @@ import se.kth.iv1350.seminar4.model.Receipt;
  * @author nilse
  */
 public class ReceiptDTO {
-    private List<ItemDTO> itemList;
+    private final List<ItemDTO> itemList;
     
-    private double totalCostBeforeDiscount;
-    private LocalDateTime dateAndTime;
-    private double change;
-    private double payment;
-    private double percentageAfterDiscount;
-    private double flatDiscount;
-    private double discount;
-    private double costAfterDiscount;
-    private double totalVAT;
+    private final double totalCostBeforeDiscount;
+    private final LocalDateTime dateAndTime;
+    private final double change;
+    private final double payment;
+    private final double percentageAfterDiscount;
+    private final double flatDiscount;
+    private final double discount;
+    private final double costAfterDiscount;
+    private final double totalVAT;
     
     
     /**

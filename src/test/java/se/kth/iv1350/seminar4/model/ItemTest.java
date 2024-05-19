@@ -4,11 +4,11 @@
  */
 package se.kth.iv1350.seminar4.model;
 
-import se.kth.iv1350.seminar4.model.Item;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 
 /**
  * 
@@ -18,36 +18,40 @@ public class ItemTest {
 
     private Item itemToTest;
     
-    private String itemName;
-    private String itemDesc;
-    private double valueAddedTax;
-    private int amount;
-    private double price;
-    private int itemId;
-
+    private final String itemName;
+    private final String itemDescription;
+    private final double valueAddedTax;
+    private final int amount;
+    private final double price;
+    private final int itemId;
+    private ItemDTO itemDTO;
+    
+    public ItemTest() {
+        itemDescription = "Whole Milk, 500ml, 3% Fat Content";
+        itemName = "Milk";
+        price = 25.50;
+        valueAddedTax = 0.12;
+        itemId = 423;
+        amount = 2;
+        
+        itemDTO = new ItemDTO(amount, itemId, itemName, itemDescription, valueAddedTax, price);
+    }
     
     @BeforeEach
     public void setUp() {
-        amount = 5;
-        price = 5.99;
-        itemId = 1;
-        valueAddedTax = 0.30;
-        itemDesc = "An Test Item.";
-        itemName = "Item";
+        
+        itemDTO = new ItemDTO(amount, itemId, itemName, itemDescription, valueAddedTax, price);
         
         
-        itemToTest = new Item(amount, itemId, itemName, itemDesc, valueAddedTax, price);
+        try {
+            itemToTest = new Item(itemDTO);
+        } catch (Exception e) {
+            fail("Failed to create Item: " + e.getMessage());
+        }
     }
     
     @AfterEach
     public void tearDown() {
-        itemToTest = null;
-        amount = 0;
-        price = 0;
-        itemId = 0;
-        valueAddedTax = 0;
-        itemDesc = null;
-        itemName = null;
     }
 
     @Test
@@ -85,7 +89,7 @@ public class ItemTest {
     @Test
     public void testGetItemDescriptionMatchesExpectedDescription() {
         System.out.println("getItemDescription");
-        String expResult = itemDesc;
+        String expResult = itemDescription;
         String result = itemToTest.getItemDescription();
         assertEquals(expResult, result, "doesn't match the expected item description");
     }
@@ -102,10 +106,30 @@ public class ItemTest {
     public void testIncreaseAmountEqualsExpectedIncreasedAmount() {
         System.out.println("increaseAmount");
         int increase = 3;
+        ItemDTO increaseItem = new ItemDTO(increase, itemId, itemName, itemDescription, valueAddedTax, price);;
         int expResult = amount + increase;
-        itemToTest.increaseAmount(increase);
+        try {
+            itemToTest.increaseAmount(increaseItem);
+        } catch (Exception e) {
+            fail("threw an unexpected exception: " + e.getMessage());
+        }
         int result = itemToTest.getItemAmount();
         assertEquals(expResult, result, "result doesn't equal the expected increase in price");
     }
     
+    @Test
+    public void testIncreaseAmountThrowsExceptionWhenTooManyItemsAdded() {
+        System.out.println("increaseAmount Exception");
+        
+        int increase = 300;
+        ItemDTO increaseItem = new ItemDTO(increase, itemId, itemName, itemDescription, valueAddedTax, price);;
+        try {
+            itemToTest.increaseAmount(increaseItem);
+            fail("Did not throw ItemAmountOverInventoryLimitException");
+        } catch (ItemAmountOverInventoryLimitException e) {
+            
+        } catch (Exception e) {
+            fail("Threw an unexpected exception: " + e.getMessage());
+        }
+    }
 }

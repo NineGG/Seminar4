@@ -16,7 +16,7 @@ import se.kth.iv1350.seminar4.model.dto.SaleStateDTO;
  */
 public class Receipt {
     
-    private List<Item> itemList = new ArrayList<>();
+    private final List<Item> itemList;
     
     private double totalCostBeforeDiscount = 0;
     private LocalDateTime dateAndTime;
@@ -27,6 +27,14 @@ public class Receipt {
     private double discount = 0;
     private double costAfterDiscount = 0;
     private double totalVAT = 0;
+
+    
+    /**
+     * Creates a new Receipt instance
+     */
+    public Receipt() {
+        this.itemList = new ArrayList<>();
+    }
     
     
     /**
@@ -90,9 +98,9 @@ public class Receipt {
      * Adds an item to the receipt.
      * 
      * @param Item an item object.
+     * @throws ItemAmountOverInventoryLimitException If item amount attempts to go above allowed Inventory limit.
      */
-    SaleStateDTO addItemToReceipt(ItemDTO itemDTO){
-        
+    SaleStateDTO addItemToReceipt(ItemDTO itemDTO) throws ItemAmountOverInventoryLimitException{
         itemList.add(new Item(itemDTO));
         recalculateReceipt();
         
@@ -107,11 +115,11 @@ public class Receipt {
      * @param increaseAmount The amount to increase the item by.
      * @return a DTO containing the updated item and running total of the sale.
      */
-    SaleStateDTO increaseItemAmount(ItemDTO itemDTO){
+    SaleStateDTO increaseItemAmount(ItemDTO itemDTO) throws ItemAmountOverInventoryLimitException{
         int itemId = itemDTO.getItemId();
         for (Item item : itemList){
             if (item.getItemId() == itemId) {
-                item.increaseAmount(itemDTO.getItemAmount());
+                item.increaseAmount(itemDTO);
                 recalculateReceipt();
                 
                 return new SaleStateDTO(itemDTOCreator(item), costAfterDiscount, itemDTO.getItemAmount());

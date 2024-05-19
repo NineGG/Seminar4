@@ -22,11 +22,11 @@ public class ExternalInventorySystemAccessPointTest {
     
     private final ItemDTO itemDTO;
     private final ItemDTO itemTwoDTO;
-    private String itemDescription = "500g, Gluten Free";
-    private String itemName = "Bread";
-    private double price = 54.50;
-    private double valueAddedTax = 0.12;
-    private int itemId = 231;
+    private final String itemDescription;
+    private final String itemName;
+    private final double price;
+    private final double valueAddedTax;
+    private final int itemId;
     
     
     public ExternalInventorySystemAccessPointTest() {
@@ -44,7 +44,20 @@ public class ExternalInventorySystemAccessPointTest {
     }
     
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws ItemInventoryResultLessThanZeroException {
+        List<ItemDTO> itemList = new ArrayList<>();
+        ItemDTO correction;
+        try{
+            correction = invInstance.retrieveItemStatus(itemId);
+            itemList.add(new ItemDTO(-(100-correction.getItemAmount()), itemId, itemName, itemDescription, valueAddedTax, price));
+            invInstance.updateInventory(itemList);
+        } catch (Exception e) {
+            fail("Teardown of Unit Test Failed: " + e.getMessage());
+        }
+        ItemDTO check = invInstance.retrieveItemStatus(itemId);
+        if (check.getItemAmount() != 100) {
+            fail("Teardown of Unit Test Failed");
+        }
     }
     
 
@@ -60,7 +73,7 @@ public class ExternalInventorySystemAccessPointTest {
             int result = invInstance.retrieveItemStatus(itemTwoDTO.getItemId()).getItemAmount();
             assertEquals(expected, result, "Did not update correctly, expected " + expected + " got " + result);
         } catch (Exception e) {
-            fail("Threw an unexpected exception.");
+            fail("Threw an unexpected exception: " + e.getMessage());
         }
     }
 
@@ -77,8 +90,90 @@ public class ExternalInventorySystemAccessPointTest {
             fail("updateInvntory fails to throw when inventory is about to go into the negatives.");
         } catch (ItemInventoryResultLessThanZeroException e) {
         } catch (Exception e) {
-            fail("Threw an unexpected exception.");
+            fail("Threw an unexpected exception: " + e.getMessage());
         }
-    
     }
+    
+    @Test
+    public void testRetrieveItemThrowsNoMatchingItemByIdExceptionCorrectlyWhenGivenAnInvalidId() {
+        System.out.println("retrieveItem NoMatchingItemByIdException");
+        
+        int id = 5;
+        try {
+            invInstance.retrieveItem(5, 1);
+            fail("Did not throw NoMatchingItemByIdException as expected when gived Id: " + id);
+        } catch (NoMatchingItemByIdException e) {
+            
+        } catch (Exception e) {
+            fail("Threw an unexpected exception"); 
+        }
+    }
+    
+    @Test
+    public void testRetrieveItemThrowsDatabaseUnresponsiveExceptionCorrectlyWhenGivenCorrectId() {
+        System.out.println("retrieveItem DatabaseUnresponsiveException");
+        
+        try {
+            invInstance.retrieveItem(123, 1);
+            fail("Did not throw DatabaseUnresponsiveException as expected");
+        } catch (DatabaseUnresponsiveException e) {
+            
+        } catch (Exception e) {
+            fail("Threw an unexpected exception: " + e.getMessage()); 
+        }
+    }
+    
+    @Test
+    public void testRetrieveItemGetsItemWithCorrectId() {
+        System.out.println("retrieveItem");
+        int result;
+        try {
+            result = invInstance.retrieveItem(itemId, 1).getItemId();
+            assertEquals(result, itemId, "Did not get an item with the correct id, expected " + itemId + " got: " + result);
+        } catch (Exception e) {
+            fail("Threw an unexpected exception: " + e.getMessage());
+        }
+    }
+    
+    @Test
+    public void testRetrieveItemStatusGetsItemWithCorrectId() {
+        System.out.println("retrieveItemStatus");
+        int result;
+        try {
+            result = invInstance.retrieveItemStatus(itemId).getItemId();
+            assertEquals(result, itemId, "Did not get an item with the correct id, expected " + itemId + " got: " + result);
+        } catch (Exception e) {
+            fail("Threw an unexpected exception: " + e.getMessage());
+        }
+    }
+    
+    @Test
+    public void testRetrieveItemStatusThrowsNoMatchingItemByIdExceptionCorrectlyWhenGivenAnInvalidId(){
+        System.out.println("retrieveItemStatus NoMatchingItemByIdException");
+        
+        int id = 5;
+        try {
+            invInstance.retrieveItemStatus(5);
+            fail("Did not throw NoMatchingItemByIdException as expected when gived Id: " + id);
+        } catch (NoMatchingItemByIdException e) {
+            
+        } catch (Exception e) {
+            fail("Threw an unexpected exception"); 
+        }
+    }
+    
+    @Test
+    public void testRetrieveItemStatusThrowsDatabaseUnresponsiveExceptionCorrectlyWhenGivenCorrectId() {
+        System.out.println("retrieveItemStatus DatabaseUnresponsiveException");
+        
+        try {
+            invInstance.retrieveItemStatus(123);
+            fail("Did not throw DatabaseUnresponsiveException as expected");
+        } catch (DatabaseUnresponsiveException e) {
+            
+        } catch (Exception e) {
+            fail("Threw an unexpected exception: " + e.getMessage()); 
+        }
+    }
+    
 }

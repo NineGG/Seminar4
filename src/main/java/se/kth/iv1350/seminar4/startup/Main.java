@@ -23,7 +23,11 @@ public class Main {
         try {
             Controller contr = new Controller();
             View view = new View(contr);
+            
             view.fakeCustomer();
+            
+            view.fakeCustomerTwo();
+            
         } catch (IOException e) {
             System.out.println("Application failed to start");
         }

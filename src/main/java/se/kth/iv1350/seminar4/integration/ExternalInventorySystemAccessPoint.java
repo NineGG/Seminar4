@@ -17,7 +17,7 @@ public class ExternalInventorySystemAccessPoint {
     
     private static final ExternalInventorySystemAccessPoint INSTANCE = 
             new ExternalInventorySystemAccessPoint();
-    private List<ExternalInventorySystemItem> inventory = new ArrayList<>();
+    private final List<ExternalInventorySystemItem> inventory;
     private String itemDescription;
     private String itemName;
     private double price;
@@ -36,6 +36,8 @@ public class ExternalInventorySystemAccessPoint {
      * initialize database
      */
     private ExternalInventorySystemAccessPoint(){
+        this.inventory = new ArrayList<>();
+        
         itemDescription = "Whole Milk, 500ml, 3% Fat Content";
         itemName = "Milk";
         price = 25.50;

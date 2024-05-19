@@ -5,6 +5,7 @@
 package se.kth.iv1350.seminar4.model;
 
 import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
+import se.kth.iv1350.seminar4.integration.ExternalInventorySystemAccessPoint;
 
 /**
  * An item object, containing information about the item.
@@ -12,36 +13,28 @@ import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
  * @author nilse
  */
 public class Item {
-    private int itemAmount = 0;
-    private int itemId;
-    private double itemPrice;
-    private String itemName;
-    private String itemDescription;
-    private double valueAddedTax;
+    private int itemAmount;
+    private final int itemId;
+    private final double itemPrice;
+    private final String itemName;
+    private final String itemDescription;
+    private final double valueAddedTax;
+    private final ExternalInventorySystemAccessPoint inventorySystem;
+    private ItemDTO itemStatus;
     
-    /**
-     * Creates an item object
-     * @param amount The amount of said item;
-     * @param itemId The item Id
-     * @param itemName The name of the item
-     * @param itemDescription A simple description of the item
-     * @param valueAddedTax The VAT
-     * @param itemPrice The cost of the item
-     */
-    
-    public Item(int amount, int itemId, String itemName, String itemDescription, double valueAddedTax, double itemPrice){
-        this.itemAmount = amount;
-        this.itemPrice = itemPrice;
-        this.itemId = itemId;
-        this.itemName = itemName;
-        this.itemDescription = itemDescription;
-        this.valueAddedTax = valueAddedTax;
-    }
+
     /**
      * Creates an Item object from an ItemDTO
      * @param itemDTO The ItemDTO to create an Item from.
+     * @throws ItemAmountOverInventoryLimitException If the total item count is going over what the inventory system holds.
      */
-    public Item(ItemDTO itemDTO){
+    public Item(ItemDTO itemDTO) throws ItemAmountOverInventoryLimitException{
+        inventorySystem = ExternalInventorySystemAccessPoint.getInstance();
+        itemStatus = inventorySystem.retrieveItemStatus(itemDTO.getItemId());
+        
+        if (itemDTO.getItemAmount() > itemStatus.getItemAmount()) throw new ItemAmountOverInventoryLimitException(
+                itemDTO, itemDTO.getItemAmount()-itemStatus.getItemAmount());
+        
         this.itemAmount = itemDTO.getItemAmount();
         this.itemPrice = itemDTO.getPrice();
         this.itemId = itemDTO.getItemId();
@@ -100,10 +93,15 @@ public class Item {
     
     /**
      * Increases the item count.
-     * @param increase The amount to increase the item count by.
+     * @param itemDTO The ItemDTO to increase the item count with.
+     * @throws ItemAmountOverInventoryLimitException If the total item count is going over what the inventory system holds
      */
-    public void increaseAmount(int increase) {
-        this.itemAmount += increase;
+    public void increaseAmount(ItemDTO itemDTO) throws ItemAmountOverInventoryLimitException {
+        itemStatus = inventorySystem.retrieveItemStatus(itemDTO.getItemId());
+        
+        if ((itemDTO.getItemAmount() + itemAmount) > itemStatus.getItemAmount()) throw new ItemAmountOverInventoryLimitException(
+        itemDTO, (itemDTO.getItemAmount() + itemAmount ) - itemStatus.getItemAmount());
+        this.itemAmount += itemDTO.getItemAmount();
     }
     
     

@@ -6,19 +6,21 @@ package se.kth.iv1350.seminar4.model;
 import java.util.List;
 import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 import se.kth.iv1350.seminar4.model.dto.*;
+import se.kth.iv1350.seminar4.integration.ExternalInventorySystemAccessPoint;
 
 /**
  * The class used to manage a new Sale.
  * @author nilse
  */
 public class Sale {
-    private Receipt receipt;
+    private final Receipt receipt;
 
     /**
      * Creates a Sale instance and a Receipt instance to go with it.
      */
     public Sale(){        
         receipt = new Receipt();
+        ExternalInventorySystemAccessPoint.getInstance();
     }
     /**
      * Adds an item to the receipt, 
@@ -26,8 +28,9 @@ public class Sale {
      * 
      * @param itemDTO The item to add.
      * @return A DTO containing information about the sale and the item.
+     * @throws ItemAmountOverInventoryLimitException If item amount attempts to go above allowed Inventory limit.
      */
-    public SaleStateDTO addItemToReceipt(ItemDTO itemDTO){
+    public SaleStateDTO addItemToReceipt(ItemDTO itemDTO) throws ItemAmountOverInventoryLimitException{
         if (receipt.itemExists(itemDTO)){
             return receipt.increaseItemAmount(itemDTO);
         } else{

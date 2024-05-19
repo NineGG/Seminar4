@@ -9,6 +9,7 @@ import se.kth.iv1350.seminar4.integration.*;
 import java.util.List;
 import se.kth.iv1350.seminar4.integration.dto.*;
 import se.kth.iv1350.seminar4.model.InsufficientPaymentException;
+import se.kth.iv1350.seminar4.model.ItemAmountOverInventoryLimitException;
 import se.kth.iv1350.seminar4.model.dto.*;
 import se.kth.iv1350.seminar4.utilities.LogWriter;
 ;
@@ -19,19 +20,19 @@ import se.kth.iv1350.seminar4.utilities.LogWriter;
  */
 public class Controller {
     private Sale sale;
-    private ExternalInventorySystemAccessPoint externInv = 
-            ExternalInventorySystemAccessPoint.getInstance();
+    private final ExternalInventorySystemAccessPoint externInv;
     
-    private ExternalAccountingSystemAccessPoint accounting = 
-            ExternalAccountingSystemAccessPoint.getInstance();
+    private final ExternalAccountingSystemAccessPoint accounting;
     
-    private LogWriter logger;
+    private final LogWriter logger;
     
     /**
      * Creates a new Controller instance
      * @throws IOException if LogWriter is unable to start.
      */
     public Controller() throws IOException {
+        this.externInv = ExternalInventorySystemAccessPoint.getInstance();
+        this.accounting = ExternalAccountingSystemAccessPoint.getInstance();
         this.logger = new LogWriter();
     }
     
@@ -77,12 +78,15 @@ public class Controller {
      * 
      * @return A SaleStateDTO containing information about the item and current total of the sale.
      * @throws ActionFailedException When no item with the provided id is found.
+     * @throws ItemAmountOverInventoryLimitException If item amount attempts to go above allowed Inventory limit.
      */
-    public SaleStateDTO addItem(int itemId) throws ActionFailedException {
+    public SaleStateDTO addItem(int itemId) throws ActionFailedException, ItemAmountOverInventoryLimitException {
         ItemDTO itemDTO;
         
         try {
             itemDTO = externInv.retrieveItem(itemId, 1);
+            return sale.addItemToReceipt(itemDTO);
+            
         } catch (NoMatchingItemByIdException e) {
             logger.log(e);
             throw new ActionFailedException("Could not find item", e);
@@ -91,7 +95,6 @@ public class Controller {
             throw new ActionFailedException("Could not connect to database", e);
         }
         
-        return sale.addItemToReceipt(itemDTO);
     }
     
     /**
@@ -102,12 +105,15 @@ public class Controller {
      * 
      * @return A SaleStateDTO containing information about the item and current total of the sale.
      * @throws ActionFailedException When no item with the provided id is found.
+     * @throws ItemAmountOverInventoryLimitException If item amount attempts to go above allowed Inventory limit.
      */
-    public SaleStateDTO addItem(int itemId, int amount) throws ActionFailedException {
+    public SaleStateDTO addItem(int itemId, int amount) throws ActionFailedException, ItemAmountOverInventoryLimitException {
         ItemDTO itemDTO;
         
         try {
             itemDTO = externInv.retrieveItem(itemId, amount);
+            return sale.addItemToReceipt(itemDTO);
+            
         } catch (NoMatchingItemByIdException e) {
             logger.log(e);
             throw new ActionFailedException("Could not find item", e);
@@ -115,7 +121,5 @@ public class Controller {
             logger.log(e);
             throw new ActionFailedException("Could not connect to database", e);
         }
-        
-        return sale.addItemToReceipt(itemDTO);
     }
 }

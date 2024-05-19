@@ -12,23 +12,30 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 /**
- *
+ * A LogWriter, Responsible to log relevant exceptions to the log file.
  * @author Nils Ekenberg
  */
 public class LogWriter {
     private static final String LOG_FILE_NAME = "log.txt";
-    private PrintWriter logFile;
+    private final PrintWriter logFile;
     
     
-    
+    /**
+     * Creates a new LogWriter instance
+     * @throws IOException If PrintWriter cannot be created.
+     */
     public LogWriter() throws IOException {
         logFile = new PrintWriter(new FileWriter(LOG_FILE_NAME, true));
     }
     
-    public void log(Exception e){
-        String message = e.getMessage() + " Exception Thrown: " + time();
+    /**
+     * Logs the exception to the log file.
+     * @param exception The exception to log.
+     */
+    public void log(Exception exception){
+        String message = exception.getMessage() + " Exception Thrown: " + time();
         logFile.println(message);
-        e.printStackTrace(logFile);
+        exception.printStackTrace(logFile);
         logFile.flush();
     }
     

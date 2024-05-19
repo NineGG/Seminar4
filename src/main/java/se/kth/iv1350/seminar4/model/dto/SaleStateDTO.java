@@ -11,9 +11,9 @@ import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
  * @author nilse
  */
 public class SaleStateDTO {
-    private ItemDTO itemDTO;
-    private double runningTotal;
-    private int itemAmountChange;
+    private final ItemDTO itemDTO;
+    private final double runningTotal;
+    private final int itemAmountChange;
     
     /**
      * Creates an SaleStateDTO

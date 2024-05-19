@@ -18,7 +18,7 @@ import se.kth.iv1350.seminar4.model.dto.ReceiptDTO;
 public class ExternalAccountingSystemAccessPoint {
     private static final ExternalAccountingSystemAccessPoint INSTANCE = 
             new ExternalAccountingSystemAccessPoint();
-    private final List<ReceiptDTO> database = new ArrayList<>();
+    private final List<ReceiptDTO> database;
     
     /**
      * Gets the singleton instance of ExternalAccountingSystemAccessPoint.
@@ -29,6 +29,7 @@ public class ExternalAccountingSystemAccessPoint {
     }
     
     private ExternalAccountingSystemAccessPoint() {
+        this.database = new ArrayList<>();
     
     }
     

@@ -13,12 +13,12 @@ import se.kth.iv1350.seminar4.integration.ExternalInventorySystemItem;
  */
 public class ItemDTO {
     
-    private double valueAddedTax;
-    private double itemPrice;
-    private int itemId;
-    private String itemName;
-    private int itemAmount;
-    private String itemDescription;
+    private final double valueAddedTax;
+    private final double itemPrice;
+    private final int itemId;
+    private final String itemName;
+    private final int itemAmount;
+    private final String itemDescription;
     
     /**
      * Creates an ItemDTO.

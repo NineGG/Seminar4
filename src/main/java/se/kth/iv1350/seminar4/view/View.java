@@ -14,21 +14,20 @@ import se.kth.iv1350.seminar4.integration.ItemInventoryResultLessThanZeroExcepti
 import se.kth.iv1350.seminar4.model.dto.ReceiptDTO;
 import se.kth.iv1350.seminar4.integration.dto.ItemDTO;
 import se.kth.iv1350.seminar4.model.InsufficientPaymentException;
+import se.kth.iv1350.seminar4.model.ItemAmountOverInventoryLimitException;
 import se.kth.iv1350.seminar4.model.dto.SaleStateDTO;
-import se.kth.iv1350.seminar4.utilities.LogWriter;
 
 /**
  * A simple View Class.
  * @author nilse
  */
 public class View{
-    private Controller contr;
+    private final Controller contr;
     
     private ReceiptDTO receipt;
     
     private SaleStateDTO saleState;
     
-    private LogWriter logger;
     
     /**
      * Creates a View object.
@@ -37,7 +36,6 @@ public class View{
      */
     public View(Controller contr) throws IOException{
         this.contr = contr;
-        this.logger = new LogWriter();
     }
     
     private void saleStatePrinter(SaleStateDTO saleState) {
@@ -45,17 +43,14 @@ public class View{
         if (saleState.getItemDTO().getItemAmount() > 1){
             System.out.println("Added " + saleState.getItemAmountChange() + 
                     " " + saleState.getItemDTO().getItemName() + " items to sale" );
-            System.out.println("Current running total: " + saleState.getRunningTotal() + " SEK");
-
-            System.out.println();
-            
         } else {
             System.out.println("Added " + saleState.getItemAmountChange() + 
                         " " + saleState.getItemDTO().getItemName() + " item to sale" );
-            System.out.println("Current running total: " + saleState.getRunningTotal() + " SEK");
-
-            System.out.println();
         }
+        
+        System.out.println("Current running total: " + saleState.getRunningTotal() + " SEK");
+
+        System.out.println();
     }
     
     private void receiptPrinter(ReceiptDTO receipt) {
@@ -90,35 +85,99 @@ public class View{
         
         contr.startSale();
         
+        addItem(423);
+        addItem(231,3);
+        addItem(123,3);
+        addItem(111);
+        addItem(423, 101);
+        
+        endSale();
+        
+        pay(500);
+        
+        System.out.println("End of fakeCustomer interaction");
+        System.out.println();
+        System.out.println();
+    }
+    
+    /**
+     * Another fake customer interaction.
+     */
+    public void fakeCustomerTwo(){
+        
+        startSale();
+        
+        addItem(423);
+        addItem(231,3);
+        addItem(123,3);
+        addItem(111);
+        addItem(423, 101);
+        
+        endSale();
+        
+        pay(20);
+        
+        System.out.println("End of fakeCustomerTwo interaction");
+        System.out.println();
+        System.out.println();
+    }
+    
+    private void addItem(int itemId) {
         try {
-            saleState = contr.addItem(423);
+            saleState = contr.addItem(itemId);
             saleStatePrinter(saleState);
-            
-            saleState = contr.addItem(231,3);
-            saleStatePrinter(saleState);
-            
-            saleState = contr.addItem(123,3);
-            saleStatePrinter(saleState);
-            
         } catch (ActionFailedException e) {
             System.out.println("Action could not be performed");
+            System.out.println();
+        } catch (ItemAmountOverInventoryLimitException e) {
+            System.out.println("Attempted to add " + e.getItemDTO().getItemAmount() + 
+                    " of item " + e.getItemDTO().getItemName() + " to the transaction, which is " + e.getOverTheMax() + 
+                    " over what the inventory system has registered, perhaps you scanned something twice?");
+            System.out.println();
         }
-        
-        System.out.println();
-        
-        double endOfSaleCost = contr.endSale();
-        System.out.println("Ending sale, to complete sale please pay " + endOfSaleCost + " SEK");
-        
+    }
+    
+    private void addItem(int itemId, int itemAmount) {
         try {
-            receipt = contr.payment(500);
+            saleState = contr.addItem(itemId, itemAmount);
+            saleStatePrinter(saleState);
+        } catch (ActionFailedException e) {
+            System.out.println("Action could not be performed");
+            System.out.println();
+        } catch (ItemAmountOverInventoryLimitException e) {
+            System.out.println("Attempted to add " + e.getItemDTO().getItemAmount() + 
+                    " of item " + e.getItemDTO().getItemName() + " to the transaction, which is " + e.getOverTheMax() + 
+                    " over what the inventory system has registered, perhaps you scanned something twice?");
+            System.out.println();
+        }
+    }
+    
+    private void pay(int payment) {
+        try {
+            receipt = contr.payment(payment);
             receiptPrinter(receipt);
+            System.out.println();
             
         } catch (ItemInventoryResultLessThanZeroException e) {
             System.out.println("Inventory system does not have " + e.getItemDTO().getItemAmount() + ", it only records" 
             + e.getInventoryItemDTO().getItemAmount() + ", perhaps you scanned too many items? If not plase contact a developer.");
+            System.out.println();
         } catch (InsufficientPaymentException e) {
-            System.out.println("Insufficient funds, attempted to pay " + e.getPayment() + ", requires " + e.getCost());
+            System.out.println("Insufficient funds, attempted to pay " + e.getPayment() + "SEK, requires " + e.getCost() + " SEK");
+            System.out.println();
         }
+    }
+    
+    private void startSale() {
+        contr.startSale();
+        System.out.println("Starting new sale");
+        System.out.println();
+    }
+    
+    private void endSale() {
+        double endOfSaleCost = contr.endSale();
+        System.out.println("Ending sale, to complete sale please pay " + endOfSaleCost + " SEK");
+        System.out.println();
     }
     
 }
